@@ -2,31 +2,38 @@ let gamePattern = []
 let userClickedPattern = []
 
 let level = 0
-
+let started = false
 
 
 
 $(document).keypress(function() {
-  
-      $("#level-title").text("Level " + level)
-      nextSequence()
+    //start game if it has not been started
+    if (!started) {
+        $("#level-title").text("Level " + level);
+        nextSequence()
+        started = true
+      }
   })
 
 $(".btn").click(function()
 {
+// use button clicked to compare to the random pattern 
  let userChosenColour =   $(this).attr("id")
  userClickedPattern.push(userChosenColour)
-
+ console.log(userClickedPattern)
  playSound(userChosenColour)
  animatePress(userChosenColour)
 
- checkAnswer(userClickedPattern.length-1)
+  checkAnswer(userClickedPattern.length-1)
 })
 
 function nextSequence()
 {
-    userClickedPattern = []
-    let randomNumber = Math.floor(Math.random() * 3)
+
+    $("#level-title").text("Level " + level);
+
+    //choose random colour for sequence
+    let randomNumber = Math.floor(Math.random() * 4)
 
     let buttonColours = ["red","blue","green","yellow"]
 
@@ -34,6 +41,7 @@ function nextSequence()
 
     gamePattern.push(randomChosenColour)
 
+    //animate randomly choosen colour
     $("#"+randomChosenColour).fadeIn(100).fadeOut(100).fadeIn(100);
     playSound(randomChosenColour);
 
@@ -45,7 +53,7 @@ function animatePress(currentColour)
 {
     $("#"+ currentColour).addClass(currentColour)
     setTimeout(() => {
-        $("#" + currentColor).removeClass("pressed")
+        $("#" + currentColour).removeClass("pressed")
     }, 100)
 }
 
@@ -58,11 +66,30 @@ function checkAnswer(currentLevel)
 {
     if (gamePattern[currentLevel] === userClickedPattern[currentLevel])
     {
-        if (userClickedPattern.length === gamePattern.length)
-        {
             setTimeout(() => {
                 nextSequence()
             }, 1000)
-        }
     }
+    else 
+    {
+        playSound("wrong")
+        $("body").addClass("game-over")
+        setTimeout(() => {
+            $("body").removeClass("game-over")
+        }, 200)
+        
+        // display failed message
+        $("#level-title").text("Game Over, Press Any Key to Restart")
+        //reset game variables
+        startOver()
+    }
+}
+
+function startOver()
+{
+    level = 0
+    started = false
+    userClickedPattern = []
+    gamePattern = []
+
 }
