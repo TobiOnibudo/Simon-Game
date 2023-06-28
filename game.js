@@ -52,4 +52,17 @@ function animatePress(currentColour)
 function playSound(name) {
     var audio = new Audio("sounds/" + name + ".mp3");
     audio.play();
-  }
+}
+
+function checkAnswer(currentLevel)
+{
+    if (gamePattern[currentLevel] === userClickedPattern[currentLevel])
+    {
+        if (userClickedPattern.length === gamePattern.length)
+        {
+            setTimeout(() => {
+                nextSequence()
+            }, 1000)
+        }
+    }
+}
